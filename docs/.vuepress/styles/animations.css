@@ -1,0 +1,401 @@
+/* WebStore V3.0 动效系统 · 2026 美化版 */
+
+/* === 基础动画 === */
+@keyframes ws-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ws-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ws-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes ws-slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes ws-shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+@keyframes ws-pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(0, 229, 255, 0.4);
+  }
+}
+
+@keyframes ws-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes ws-float-large {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  33% { transform: translateY(-20px) translateX(10px); }
+  66% { transform: translateY(10px) translateX(-15px); }
+}
+
+@keyframes ws-rotate-gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes ws-draw-line {
+  from { stroke-dashoffset: 1000; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes ws-count-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ws-orbit {
+  from { transform: rotate(0deg) translateX(40px) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(40px) rotate(-360deg); }
+}
+
+@keyframes ws-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* === 2026 新增动效 === */
+
+/* 液态玻璃光泽流动 */
+@keyframes ws-liquid-sheen {
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-15deg);
+  }
+}
+
+/* 数据脉冲 */
+@keyframes ws-data-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.85;
+  }
+}
+
+/* 边框流光 */
+@keyframes ws-border-flow {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+
+/* 粒子轨迹 */
+@keyframes ws-particle-trail {
+  0% {
+    transform: translate(0, 0) scale(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+    transform: translate(10px, -10px) scale(1);
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(40px, -40px) scale(0);
+    opacity: 0;
+  }
+}
+
+/* 光环旋转 */
+@keyframes ws-ring-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 呼吸 */
+@keyframes ws-breathe {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.02);
+    filter: brightness(1.1);
+  }
+}
+
+/* 数字翻牌 */
+@keyframes ws-flip-up {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 弹性弹入 */
+@keyframes ws-pop-in {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 渐入向上 + 模糊 */
+@keyframes ws-blur-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* 渐变文字流动 */
+@keyframes ws-text-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* 进度条加载 */
+@keyframes ws-progress-stripe {
+  from { background-position: 0 0; }
+  to { background-position: 40px 0; }
+}
+
+/* 涟漪扩散 */
+@keyframes ws-ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* 浮动光点 */
+@keyframes ws-orb-float {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(20px, -15px);
+  }
+  50% {
+    transform: translate(-10px, 20px);
+  }
+  75% {
+    transform: translate(-20px, -10px);
+  }
+}
+
+/* === 动画工具类 === */
+.ws-anim-fade-up {
+  animation: ws-fade-up 0.7s var(--ease-out) both;
+}
+
+.ws-anim-fade-in {
+  animation: ws-fade-in 0.6s var(--ease-out) both;
+}
+
+.ws-anim-scale-in {
+  animation: ws-scale-in 0.5s var(--ease-out) both;
+}
+
+.ws-anim-float {
+  animation: ws-float 4s ease-in-out infinite;
+}
+
+.ws-anim-pulse-glow {
+  animation: ws-pulse-glow 2.5s ease-in-out infinite;
+}
+
+.ws-anim-blink {
+  animation: ws-blink 2s ease-in-out infinite;
+}
+
+.ws-anim-breathe {
+  animation: ws-breathe 4s ease-in-out infinite;
+}
+
+.ws-anim-pop-in {
+  animation: ws-pop-in 0.5s var(--ease-spring) both;
+}
+
+.ws-anim-blur-up {
+  animation: ws-blur-up 0.8s var(--ease-out) both;
+}
+
+/* === 交错延迟 === */
+.ws-delay-1 { animation-delay: 0.08s; }
+.ws-delay-2 { animation-delay: 0.16s; }
+.ws-delay-3 { animation-delay: 0.24s; }
+.ws-delay-4 { animation-delay: 0.32s; }
+.ws-delay-5 { animation-delay: 0.4s; }
+.ws-delay-6 { animation-delay: 0.48s; }
+.ws-delay-7 { animation-delay: 0.56s; }
+.ws-delay-8 { animation-delay: 0.64s; }
+
+/* === 骨架屏 === */
+.ws-skeleton {
+  background: linear-gradient(90deg,
+    var(--color-surface) 0%,
+    var(--color-surface-light) 50%,
+    var(--color-surface) 100%);
+  background-size: 1000px 100%;
+  animation: ws-shimmer 2s infinite linear;
+  border-radius: var(--radius-sm);
+}
+
+/* === 渐变文字流动 === */
+.ws-gradient-animate {
+  background: linear-gradient(90deg, #00E5FF, #C6FF3D, #B794F4, #00E5FF);
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: ws-text-shimmer 6s linear infinite;
+}
+
+/* === hover 升起 === */
+.ws-hover-lift {
+  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+}
+
+.ws-hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* === 液态玻璃光泽（hover 触发） === */
+.ws-liquid-hover {
+  position: relative;
+  overflow: hidden;
+}
+
+.ws-liquid-hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 80%;
+  height: 100%;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08),
+    rgba(0, 229, 255, 0.06),
+    transparent
+  );
+  transform: skewX(-15deg);
+  transition: left 0.8s var(--ease-out);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ws-liquid-hover:hover::before {
+  left: 150%;
+}
+
+/* === 流光边框 === */
+.ws-flow-border {
+  position: relative;
+  background-clip: padding-box;
+}
+
+.ws-flow-border::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--color-accent-cyan) 25%,
+    transparent 50%,
+    var(--color-accent-lime) 75%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s;
+  animation: ws-border-flow 3s linear infinite;
+  pointer-events: none;
+}
+
+.ws-flow-border:hover::after {
+  opacity: 1;
+}
+
+/* === 滚动渐显 === */
+.ws-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+}
+
+.ws-reveal.ws-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* === 包容性设计 === */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

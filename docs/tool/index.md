@@ -1,0 +1,5 @@
+---
+layout: Layout
+---
+
+<ToolDetailPage />
