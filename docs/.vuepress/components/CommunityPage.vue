@@ -9,6 +9,7 @@ import {
   toggleUgcLike, isUgcLiked,
   userPoints
 } from '../store/useStore.ts'
+import { submissionCovers, interviewImages, heroImages } from '../data/images.ts'
 
 const route = useRoute()
 const router = useRouter()
@@ -217,6 +218,9 @@ const displayPoints = computed(() => userPoints.value)
     <div class="ws-container">
       <!-- 头部 -->
       <div class="ws-community-hero ws-anim-fade-up">
+        <div class="ws-community-hero-bg">
+          <img :src="heroImages.community" alt="社区广场" class="ws-community-hero-img" loading="lazy" />
+        </div>
         <span class="ws-section-eyebrow">COMMUNITY · V3.0</span>
         <h1 class="ws-community-title">公共话题 <span class="text-gradient">广场</span></h1>
         <p class="ws-community-sub">测评 · 技巧 · 需求征集 · 开发者访谈 —— 发帖可@对应开发者</p>
@@ -320,6 +324,9 @@ const displayPoints = computed(() => userPoints.value)
           <div class="ws-aside-card ws-interview-card">
             <h3><WsIcon name="video" :size="16" color="var(--color-accent-violet)" /> 开发者访谈专栏</h3>
             <div v-for="iv in interviews" :key="iv.id" class="ws-interview-item">
+              <div class="ws-interview-thumb">
+                <img :src="iv.id === 'iv1' ? interviewImages.iv1 : interviewImages.iv2" :alt="iv.guest" class="ws-interview-thumb-img" loading="lazy" />
+              </div>
               <div class="ws-interview-guest">
                 <span class="ws-guest-avatar">{{ iv.guestAvatar }}</span>
                 <div>
@@ -401,6 +408,7 @@ const displayPoints = computed(() => userPoints.value)
           <div class="ws-submission-grid">
             <div v-for="s in contestSubmissions" :key="s.id" class="ws-submission-card">
               <div class="ws-sub-cover" :style="{ background: 'linear-gradient(135deg, #6C8EEF, #B794F4)' }">
+                <img :src="s.id === 's1' ? submissionCovers.s1 : s.id === 's2' ? submissionCovers.s2 : submissionCovers.s3" :alt="s.title" class="ws-sub-cover-img" loading="lazy" />
                 <span class="ws-sub-icon">{{ s.tool === 'PixelForge' ? '◈' : '▣' }}</span>
                 <span class="ws-sub-votes font-mono">{{ s.votes }} 票</span>
               </div>
@@ -470,7 +478,9 @@ const displayPoints = computed(() => userPoints.value)
 
 <style scoped>
 .ws-page { padding: 48px 0 80px; position: relative; z-index: 2; }
-.ws-community-hero { text-align: center; margin-bottom: 40px; }
+.ws-community-hero { text-align: center; margin-bottom: 40px; position: relative; padding: 48px 0 24px; }
+.ws-community-hero-bg { position: absolute; inset: 0; border-radius: 24px; overflow: hidden; opacity: 0.12; z-index: -1; }
+.ws-community-hero-img { width: 100%; height: 100%; object-fit: cover; filter: blur(1px); }
 .ws-community-title { font-family: var(--font-display); font-weight: 700; font-size: clamp(36px, 5vw, 56px); margin: 12px 0; }
 .ws-community-sub { font-size: 15px; color: var(--color-text-secondary); margin: 0; }
 .ws-hero-points { margin-top: 12px; font-size: 13px; color: var(--color-text-secondary); }
@@ -556,6 +566,9 @@ const displayPoints = computed(() => userPoints.value)
 
 .ws-interview-item { padding: 14px 0; border-bottom: 1px solid var(--color-border); }
 .ws-interview-item:last-child { border-bottom: none; }
+.ws-interview-thumb { width: 100%; height: 120px; border-radius: var(--radius-sm); overflow: hidden; margin-bottom: 10px; }
+.ws-interview-thumb-img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--transition-base); }
+.ws-interview-item:hover .ws-interview-thumb-img { transform: scale(1.03); }
 .ws-interview-guest { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
 .ws-guest-avatar { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: var(--color-surface-light); border-radius: 8px; font-size: 16px; color: var(--color-accent-violet); }
 .ws-guest-name { display: block; font-size: 13px; color: var(--color-text); }
@@ -625,7 +638,9 @@ const displayPoints = computed(() => userPoints.value)
 .ws-submission-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .ws-submission-card { background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01)); border: 1px solid var(--color-border); border-radius: var(--radius-md); overflow: hidden; transition: all var(--transition-base); }
 .ws-submission-card:hover { border-color: var(--color-accent-amber-soft); transform: translateY(-4px); }
-.ws-sub-cover { height: 140px; display: flex; align-items: center; justify-content: center; position: relative; }
+.ws-sub-cover { height: 140px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.ws-sub-cover-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.6; transition: opacity var(--transition-base); }
+.ws-submission-card:hover .ws-sub-cover-img { opacity: 0.75; }
 .ws-sub-icon { font-size: 48px; color: white; }
 .ws-sub-votes { position: absolute; top: 10px; right: 10px; padding: 3px 8px; background: rgba(0,0,0,0.4); color: var(--color-accent-lime); border-radius: var(--radius-pill); font-size: 11px; }
 .ws-sub-body { padding: 14px; }
