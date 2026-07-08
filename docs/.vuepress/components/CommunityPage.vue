@@ -7,7 +7,8 @@ import {
   addPost, myPosts, addQuestion, myQuestions,
   voteQuestion, getQaVotes,
   toggleUgcLike, isUgcLiked,
-  userPoints
+  userPoints,
+  getTopicComments, addTopicComment
 } from '../store/useStore.ts'
 import { submissionCovers, interviewImages, heroImages } from '../data/images.ts'
 
@@ -110,24 +111,22 @@ const toggleTopicLike = (id: string) => {
   toggleUgcLike('topic_' + id)
 }
 
-// 评论展开
+// 评论展开（持久化到 store）
 const expandedTopic = ref<string | null>(null)
-const topicComments = ref<Record<string, any[]>>({})
 const commentInput = ref('')
 const toggleComments = (id: string) => {
   expandedTopic.value = expandedTopic.value === id ? null : id
-  if (!topicComments.value[id]) {
-    // 初始化 mock 评论
-    topicComments.value[id] = [
-      { user: '代码诗人', avatar: '✦', text: '感谢分享，学到了！', time: '2小时前' },
-      { user: '设计师小K', avatar: '◈', text: '想请教一下，这个对新手友好吗？', time: '1小时前' }
-    ]
+  // 如果 store 中没有评论，初始化 mock 默认评论
+  const existing = getTopicComments(id)
+  if (!existing.length) {
+    addTopicComment(id, { user: '代码诗人', avatar: '✦', text: '感谢分享，学到了！', time: '2小时前' })
+    addTopicComment(id, { user: '设计师小K', avatar: '◈', text: '想请教一下，这个对新手友好吗？', time: '1小时前' })
   }
 }
+const topicCommentsMap = (id: string) => getTopicComments(id)
 const submitComment = (topicId: string) => {
   if (!commentInput.value.trim()) return
-  if (!topicComments.value[topicId]) topicComments.value[topicId] = []
-  topicComments.value[topicId].push({
+  addTopicComment(topicId, {
     user: '林深时见鹿',
     avatar: '✿',
     text: commentInput.value.trim(),
@@ -280,7 +279,7 @@ const displayPoints = computed(() => userPoints.value)
                     {{ t.likes + (topicLiked(t.id) ? 1 : 0) }}
                   </button>
                   <button class="ws-stat ws-comment-btn" @click.stop="toggleComments(t.id)">
-                    <WsIcon name="message" :size="12" color="var(--color-accent-cyan)" /> {{ t.comments + (topicComments[t.id]?.length || 0) }}
+                    <WsIcon name="message" :size="12" color="var(--color-accent-cyan)" /> {{ t.comments + (topicCommentsMap(t.id)?.length || 0) }}
                   </button>
                 </div>
               </div>
@@ -289,7 +288,7 @@ const displayPoints = computed(() => userPoints.value)
               <Transition name="ws-slide-down">
                 <div v-if="expandedTopic === t.id" class="ws-comment-section">
                   <div class="ws-comment-list">
-                    <div v-for="(c, i) in topicComments[t.id] || []" :key="i" class="ws-comment-item" :class="{ mine: c.isMine }">
+                    <div v-for="(c, i) in topicCommentsMap(t.id) || []" :key="i" class="ws-comment-item" :class="{ mine: c.isMine }">
                       <span class="ws-comment-avatar">{{ c.avatar }}</span>
                       <div class="ws-comment-body">
                         <div class="ws-comment-head">
