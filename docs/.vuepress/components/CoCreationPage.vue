@@ -5,7 +5,8 @@ import { coCreationRequests, contests } from '../data/community.ts'
 import {
   isJoinedGroup, joinGroup,
   voteCoRequest, getCoVotes,
-  userPoints, addPost
+  userPoints, addPost,
+  addCoRequest, coRequests, updateCoRequest
 } from '../store/useStore.ts'
 import { heroImages } from '../data/images.ts'
 
@@ -26,19 +27,22 @@ const joinCoBuild = (g: any) => {
   alert(`已加入「${g.name}」，获得共建标识 +5 积分`)
 }
 
-// 定制需求
-const customRequests = ref([
+// 定制需求（store 持久化 + mock 默认数据合并）
+const mockCustomRequests = [
   { id: 'cr_req1', title: '需要支持 ClickHouse 数据源', budget: '¥5,000-8,000', dev: 'QuantumVue', status: '对接中', coCreator: '林深时见鹿', accepted: false, feedback: '' },
   { id: 'cr_req2', title: '像素体素3D生成插件', budget: '¥10,000+', dev: '招募中', status: '招标中', coCreator: null, accepted: false, feedback: '' },
   { id: 'cr_req3', title: 'Markdown 脑图导出功能', budget: '¥3,000', dev: 'InkWell', status: '已上线', coCreator: '代码诗人', accepted: false, feedback: '' }
-])
+]
+const customRequests = computed(() => {
+  const storeReqs = coRequests.value.map(r => ({ ...r, dev: r.dev || '招募中', status: r.status || '招标中', coCreator: r.coCreator || '林深时见鹿', accepted: r.accepted || false, feedback: r.feedback || '' }))
+  return [...storeReqs, ...mockCustomRequests]
+})
 
 const newRequest = ref('')
 const newBudget = ref('待报价')
 const submitRequest = () => {
   if (!newRequest.value.trim()) return
-  customRequests.value.unshift({
-    id: 'cr_req_' + Date.now(),
+  addCoRequest({
     title: newRequest.value.trim(),
     budget: newBudget.value || '待报价',
     dev: '招募中',
@@ -61,7 +65,7 @@ const submitRequest = () => {
   alert('需求已发布，已同步至社区需求征集版块 +10 积分')
 }
 
-// 接单 / 提交反馈
+// 接单 / 提交反馈（持久化到 store）
 const acceptOrder = (req: any) => {
   if (req.accepted) {
     alert('您已接单，可在下方填写反馈')
@@ -70,6 +74,9 @@ const acceptOrder = (req: any) => {
   req.accepted = true
   req.status = '对接中'
   req.dev = 'NovaStudio'
+  if (req.id && req.id.startsWith('cr_')) {
+    updateCoRequest(req.id, { accepted: true, status: '对接中', dev: 'NovaStudio' })
+  }
   alert(`已接单「${req.title}」，开发者将主动与您对接`)
 }
 
@@ -83,6 +90,9 @@ const submitFeedback = (req: any) => {
   if (!feedbackText.value.trim()) return
   req.feedback = feedbackText.value.trim()
   req.status = '已完成'
+  if (req.id && req.id.startsWith('cr_')) {
+    updateCoRequest(req.id, { feedback: feedbackText.value.trim(), status: '已完成' })
+  }
   showFeedback.value = null
   feedbackText.value = ''
   alert('反馈已提交，需求已标记为完成')
