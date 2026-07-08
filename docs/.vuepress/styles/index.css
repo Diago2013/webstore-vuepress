@@ -162,6 +162,19 @@ body::before {
   max-width: 100% !important;
 }
 
+/* 隐藏 markdown h1，保留给 SEO 和搜索索引 */
+.theme-default-content > h1:first-child {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* 隐藏默认 navbar，使用自定义 */
 .theme-container .navbar {
   display: none !important;
