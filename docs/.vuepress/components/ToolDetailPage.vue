@@ -10,7 +10,12 @@ import {
   voteToolUpdate, getToolVotes,
   voteCoRequest, getCoVotes,
   launchTool, getLaunchCount,
-  addReview, getReviews
+  addReview, getReviews,
+  getToolChats, addToolChat,
+  getToolDMs, addToolDM,
+  addCoRequest, coRequests,
+  addErrorReport,
+  isLiveRegistered, registerLive
 } from '../store/useStore.ts'
 
 const route = useRoute()
@@ -70,29 +75,34 @@ const voteUpdate = () => {
 // 口碑词云
 const wordCloud = computed(() => tool.value.wordCloud)
 
-// 临时聊天室
-const chatMessages = ref([
+// 临时聊天室（持久化到 store）
+const defaultChatMsgs = [
   { user: '设计师小K', avatar: '◈', text: '这个工具的AI风格迁移真的强', time: '14:23' },
   { user: '代码诗人', avatar: '✦', text: '刚升级到v3.2.1，性能确实提升了不少', time: '14:25' },
   { user: '数据矿工', avatar: '◢', text: '请问骨骼动画有教程吗？', time: '14:28' },
   { user: 'NovaStudio', avatar: '◆', text: '@数据矿工 官方文档有详细教程，社区也有横评帖', time: '14:30', isDev: true }
-])
+]
+const chatMessages = computed(() => {
+  const stored = getToolChats(tool.value.id)
+  return stored.length ? stored : defaultChatMsgs
+})
 const chatInput = ref('')
 const sendChat = () => {
   if (!chatInput.value.trim()) return
   const now = new Date()
   const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
-  chatMessages.value.push({ user: '林深时见鹿', avatar: '✿', text: chatInput.value, time })
+  const msg = { user: '林深时见鹿', avatar: '✿', text: chatInput.value, time }
+  addToolChat(tool.value.id, msg)
   chatInput.value = ''
 }
 
-// 私信抽屉
+// 私信抽屉（持久化到 store）
 const dmOpen = ref(false)
-const dmMessages = ref<any[]>([])
+const dmMessages = computed(() => getToolDMs(tool.value.id))
 const dmInput = ref('')
 const sendDm = () => {
   if (!dmInput.value.trim()) return
-  dmMessages.value.push({ from: 'me', text: dmInput.value })
+  addToolDM(tool.value.id, { from: 'me', text: dmInput.value })
   const userText = dmInput.value
   dmInput.value = ''
   // 智能回复（基于关键词）
@@ -102,7 +112,7 @@ const sendDm = () => {
     else if (userText.includes('价格') || userText.includes('费用')) reply = `${tool.value.name} ${tool.value.isFree ? '基础功能免费' : '订阅制'}，可在工具内查看具体套餐`
     else if (userText.includes('教程') || userText.includes('文档')) reply = '官方文档中心有详细教程，社区也有用户撰写的进阶指南'
     else if (userText.includes('API')) reply = '我们提供完整 REST API 与 Webhook，可在开发者文档查看'
-    dmMessages.value.push({ from: 'dev', text: reply })
+    addToolDM(tool.value.id, { from: 'dev', text: reply })
   }, 1200)
 }
 
@@ -112,25 +122,31 @@ const fillDm = (tag: string) => {
   dmInput.value = `您好，想咨询${tag}相关事宜：`
 }
 
-// 共创需求
-const coRequests = ref([
+// 共创需求（持久化到 store + mock 默认数据）
+const defaultCoRequests = [
   { id: 'cr1', title: '支持图层混合模式', votes: 842, status: 'planned', type: 'short' },
   { id: 'cr2', title: '导出WebP格式', votes: 567, status: 'voting', type: 'short' },
   { id: 'cr3', title: '协作编辑功能', votes: 1203, status: 'planning', type: 'long' },
   { id: 'cr4', title: 'AI生成3D像素体素', votes: 2340, status: 'planning', type: 'long' }
-])
+]
+const allCoRequests = computed(() => {
+  const storeReqs = coRequests.value.map(r => ({
+    id: r.id, title: r.title, votes: (r.votes || 0) + getCoVotes(r.id), status: r.status || 'voting', type: r.type || 'short'
+  }))
+  return [...storeReqs, ...defaultCoRequests]
+})
 
 const newCoRequest = ref('')
 const submitCoRequest = () => {
   if (!newCoRequest.value.trim()) return
-  coRequests.value.unshift({
-    id: 'cr_' + Date.now(),
-    title: newCoRequest.value,
+  addCoRequest({
+    title: newCoRequest.value.trim(),
     votes: 1,
     status: 'voting',
     type: 'short'
   })
   newCoRequest.value = ''
+  alert('功能建议已提交 +5 积分')
 }
 
 // 共创投票（持久化）
@@ -147,7 +163,7 @@ const statusMap: Record<string, { text: string; color: string }> = {
   planning: { text: '评估中', color: '#FFB84D' }
 }
 
-// 纠错
+// 纠错（持久化到 store）
 const errorReport = ref(false)
 const errorType = ref('')
 const errorDesc = ref('')
@@ -157,6 +173,12 @@ const submitError = () => {
     alert('请选择错误类型并填写描述')
     return
   }
+  addErrorReport({
+    toolId: tool.value.id,
+    toolName: tool.value.name,
+    type: errorType.value,
+    desc: errorDesc.value.trim()
+  })
   errorSubmitted.value = true
   setTimeout(() => {
     errorReport.value = false
@@ -166,15 +188,14 @@ const submitError = () => {
   }, 2000)
 }
 
-// 答疑直播
+// 答疑直播（持久化到 store）
 const liveSession = ref({
   title: `${tool.value.name} ${tool.value.version} 新功能答疑专场`,
   time: '本周六 20:00',
-  registered: false,
   questions: 28
 })
-
-const registerLive = () => { liveSession.value.registered = true }
+const liveRegistered = computed(() => isLiveRegistered(tool.value.id))
+const registerLiveSession = () => registerLive(tool.value.id)
 const liveQuestion = ref('')
 const askLiveQuestion = () => {
   if (!liveQuestion.value.trim()) return
@@ -638,7 +659,7 @@ const maxWeight = computed(() => Math.max(...wordCloud.value.map(w => w.weight))
               <button @click="submitCoRequest"><WsIcon name="plus" :size="14" /> 提交</button>
             </div>
             <div class="ws-cocreate-list">
-              <div v-for="req in coRequests" :key="req.title" class="ws-cocreate-item">
+              <div v-for="req in allCoRequests" :key="req.title" class="ws-cocreate-item">
                 <span class="ws-req-type" :class="req.type">{{ req.type === 'short' ? '短期' : '长期' }}</span>
                 <div class="ws-req-info">
                   <h4>{{ req.title }}</h4>
@@ -667,8 +688,8 @@ const maxWeight = computed(() => Math.max(...wordCloud.value.map(w => w.weight))
               <p class="ws-live-time"><WsIcon name="clock" :size="13" /> {{ liveSession.time }}</p>
               <p class="ws-live-questions">已收集 <strong>{{ liveSession.questions }}</strong> 个问题</p>
               <div class="ws-live-actions">
-                <button class="ws-btn ws-btn-primary" :disabled="liveSession.registered" @click="registerLive">
-                  {{ liveSession.registered ? '已预约 ✓' : '预约报名' }}
+                <button class="ws-btn ws-btn-primary" :disabled="liveRegistered" @click="registerLiveSession">
+                  {{ liveRegistered ? '已预约 ✓' : '预约报名' }}
                 </button>
                 <button class="ws-btn ws-btn-ghost" @click="askLiveQuestion" :disabled="!liveQuestion.trim()">提前提问</button>
               </div>
