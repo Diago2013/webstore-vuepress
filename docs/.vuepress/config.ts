@@ -3,7 +3,7 @@ import { viteBundler } from '@vuepress/bundler-vite'
 import { defaultTheme } from '@vuepress/theme-default'
 
 export default defineUserConfig({
-  base: '/',
+  base: '/webstore-vuepress/',
   lang: 'zh-CN',
   title: 'WebStore',
   description: '网页版 App Store - 聚合全网工具、资源、服务类网页',
