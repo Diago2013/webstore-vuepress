@@ -5,6 +5,7 @@ import WsIcon from './shared/WsIcon.vue'
 import WsToolCard from './shared/WsToolCard.vue'
 import { tools, categories } from '../data/tools.ts'
 import { pinnedTools, togglePin, isPinned } from '../store/useStore.ts'
+import { sceneImages, heroImages } from '../data/images.ts'
 
 const router = useRouter()
 
@@ -293,6 +294,27 @@ const applyMood = (moodId: string) => {
           </div>
         </div>
         <div class="ws-scene-visual" :style="{ background: scenes.find(s => s.id === activeScene)?.gradient }">
+          <img
+            v-if="activeScene === 's1'"
+            :src="sceneImages.s1"
+            alt="独立开发者工具箱"
+            class="ws-scene-img"
+            loading="lazy"
+          />
+          <img
+            v-else-if="activeScene === 's2'"
+            :src="sceneImages.s2"
+            alt="数据分析工作流"
+            class="ws-scene-img"
+            loading="lazy"
+          />
+          <img
+            v-else-if="activeScene === 's3'"
+            :src="sceneImages.s3"
+            alt="内容创作AI装备"
+            class="ws-scene-img"
+            loading="lazy"
+          />
           <span class="ws-scene-icon">{{ scenes.find(s => s.id === activeScene)?.tools.length }} 款工具组合</span>
         </div>
       </div>
@@ -1199,6 +1221,21 @@ const applyMood = (moodId: string) => {
   overflow: hidden;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transition: transform var(--transition-base);
+}
+
+.ws-scene-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.55;
+  mix-blend-mode: overlay;
+  transition: opacity var(--transition-base);
+}
+
+.ws-scene-visual:hover .ws-scene-img {
+  opacity: 0.7;
 }
 
 .ws-scene-visual:hover {
