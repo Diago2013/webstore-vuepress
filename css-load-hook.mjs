@@ -30,5 +30,16 @@ export async function load(url, context, nextLoad) {
       shortCircuit: true
     }
   }
-  return nextLoad(url, context)
+  const result = await nextLoad(url, context)
+  // 为 vuepress client 预编译产物注入全局变量定义
+  // vite 的 define 替换不会作用于 node_modules 预编译 .js
+  if (url.includes('/@vuepress/client/dist/') && url.endsWith('.js') && result.source) {
+    const src = typeof result.source === 'string' ? result.source : result.source.toString()
+    const prefix = 'var __VUEPRESS_DEV__ = false; var __VUEPRESS_SSR__ = true;'
+    return {
+      ...result,
+      source: prefix + src
+    }
+  }
+  return result
 }
