@@ -31,11 +31,18 @@ export async function load(url, context, nextLoad) {
     }
   }
   const result = await nextLoad(url, context)
-  // 为 vuepress client 预编译产物注入全局变量定义
+  // 为 vuepress 预编译产物注入全局变量定义
   // vite 的 define 替换不会作用于 node_modules 预编译 .js
-  if (url.includes('/@vuepress/client/dist/') && url.endsWith('.js') && result.source) {
-    const src = typeof result.source === 'string' ? result.source : result.source.toString()
-    const prefix = 'var __VUEPRESS_DEV__ = false; var __VUEPRESS_SSR__ = true;'
+  if (url.endsWith('.js') && url.includes('/@vuepress/') && result.source) {
+    let src
+    if (typeof result.source === 'string') {
+      src = result.source
+    } else if (Buffer.isBuffer(result.source)) {
+      src = result.source.toString('utf8')
+    } else {
+      src = String(result.source)
+    }
+    const prefix = 'globalThis.__VUEPRESS_DEV__ = typeof globalThis.__VUEPRESS_DEV__ !== "undefined" ? globalThis.__VUEPRESS_DEV__ : false; globalThis.__VUEPRESS_SSR__ = typeof globalThis.__VUEPRESS_SSR__ !== "undefined" ? globalThis.__VUEPRESS_SSR__ : true;'
     return {
       ...result,
       source: prefix + src
