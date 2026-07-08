@@ -10,14 +10,15 @@
     "clean-dev": "vuepress dev docs --clean-cache"
   },
   "dependencies": {
-    "vue": "^3.4.21",
-    "vuepress": "^2.0.0-rc.9",
     "@vuepress/bundler-vite": "^2.0.0-rc.9",
-    "@vuepress/theme-default": "^2.0.0-rc.9"
+    "@vuepress/plugin-search": "^2.0.0-rc",
+    "@vuepress/theme-default": "^2.0.0-rc.9",
+    "vue": "^3.4.21",
+    "vuepress": "^2.0.0-rc.9"
   },
   "devDependencies": {
-    "typescript": "^5.4.0",
-    "sass-embedded": "^1.71.0"
+    "sass-embedded": "^1.71.0",
+    "typescript": "^5.4.0"
   },
   "engines": {
     "node": ">=18.0.0"
