@@ -6,6 +6,7 @@ import {
   exchangeItem, exchangedItems as storeExchanged,
   userPoints, memberDays
 } from '../store/useStore.ts'
+import { heroImages } from '../data/images.ts'
 
 // 用户激励规则
 const userRules = ref(incentiveRules.user)
@@ -145,6 +146,9 @@ const platformStats = ref([
     <div class="ws-container">
       <!-- 头部 -->
       <div class="ws-incentive-hero ws-anim-fade-up">
+        <div class="ws-incentive-hero-bg">
+          <img :src="heroImages.incentive" alt="激励安全" class="ws-incentive-hero-img" loading="lazy" />
+        </div>
         <span class="ws-section-eyebrow">INCENTIVE & SECURITY · V3.0</span>
         <h1 class="ws-incentive-title">双向激励与 <span class="text-gradient">信任安全</span></h1>
         <p class="ws-incentive-sub">用户激励 · 开发者激励 · 互动配套安全隐私<br/>构建「优质工具入驻 — 用户活跃反馈 — 工具持续优化」的正向循环</p>
@@ -376,7 +380,10 @@ const platformStats = ref([
 
 <style scoped>
 .ws-page { padding: 48px 0 80px; position: relative; z-index: 2; }
-.ws-incentive-hero { text-align: center; margin-bottom: 56px; }
+.ws-incentive-hero { text-align: center; margin-bottom: 56px; position: relative; }
+.ws-incentive-hero-bg { position: absolute; inset: -48px -48px 40px; border-radius: 32px; overflow: hidden; z-index: -1; opacity: 0.15; }
+.ws-incentive-hero-img { width: 100%; height: 100%; object-fit: cover; filter: blur(2px) saturate(1.1); }
+.ws-incentive-hero::after { position: absolute; inset: -48px -48px 40px; border-radius: 32px; background: linear-gradient(180deg, rgba(10,14,39,0), rgba(10,14,39,0.7)); content: ''; z-index: -1; }
 .ws-incentive-title { font-family: var(--font-display); font-weight: 700; font-size: clamp(36px, 5vw, 56px); margin: 12px 0; letter-spacing: -0.02em; }
 .ws-incentive-sub { font-size: 15px; color: var(--color-text-secondary); line-height: 1.7; margin: 0 0 32px; }
 
