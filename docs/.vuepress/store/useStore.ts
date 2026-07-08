@@ -26,6 +26,13 @@ interface PersistState {
   broadcastLogs: any[]         // 开发者推送记录
   joinedGroups: string[]       // 已加入的共创群组
   toolLaunchCount: Record<string, number>  // 工具使用次数
+  coRequests: any[]            // 共创需求（定制需求 + 功能建议）
+  topicComments: Record<string, any[]>  // 社区帖子评论 { topicId: [...] }
+  toolChats: Record<string, any[]>  // 工具聊天室消息 { toolId: [...] }
+  toolDMs: Record<string, any[]>  // 工具私信消息 { toolId: [...] }
+  errorReports: any[]          // 纠错报告
+  ugcFeedback: any[]           // 开发者反馈看板状态
+  liveRegistered: Record<string, boolean>  // 直播预约状态
 }
 
 const defaultState: PersistState = {
@@ -50,7 +57,14 @@ const defaultState: PersistState = {
   theme: 'dark',
   broadcastLogs: [],
   joinedGroups: [],
-  toolLaunchCount: {}
+  toolLaunchCount: {},
+  coRequests: [],
+  topicComments: {},
+  toolChats: {},
+  toolDMs: {},
+  errorReports: [],
+  ugcFeedback: [],
+  liveRegistered: {}
 }
 
 // 从 localStorage 加载
@@ -240,6 +254,67 @@ export const toggleTheme = () => {
 // ===== 开发者广播日志 =====
 export const addBroadcastLog = (log: any) => {
   state.value.broadcastLogs.unshift({ ...log, id: 'b_' + Date.now(), createdAt: new Date().toISOString() })
+}
+
+// ===== 共创需求持久化 =====
+export const addCoRequest = (req: any) => {
+  state.value.coRequests.unshift({ ...req, id: 'cr_' + Date.now(), createdAt: new Date().toISOString() })
+  state.value.userPoints += 5
+}
+export const coRequests = computed(() => state.value.coRequests)
+export const updateCoRequest = (id: string, updates: any) => {
+  const idx = state.value.coRequests.findIndex((r: any) => r.id === id)
+  if (idx >= 0) Object.assign(state.value.coRequests[idx], updates)
+}
+
+// ===== 社区评论持久化 =====
+export const getTopicComments = (topicId: string) => state.value.topicComments[topicId] || []
+export const addTopicComment = (topicId: string, comment: any) => {
+  if (!state.value.topicComments[topicId]) state.value.topicComments[topicId] = []
+  state.value.topicComments[topicId].push({
+    ...comment,
+    id: 'tc_' + Date.now(),
+    createdAt: new Date().toISOString()
+  })
+  state.value.userPoints += 2
+}
+
+// ===== 工具聊天室持久化 =====
+export const getToolChats = (toolId: string) => state.value.toolChats[toolId] || []
+export const addToolChat = (toolId: string, msg: any) => {
+  if (!state.value.toolChats[toolId]) state.value.toolChats[toolId] = []
+  state.value.toolChats[toolId].push(msg)
+}
+
+// ===== 工具私信持久化 =====
+export const getToolDMs = (toolId: string) => state.value.toolDMs[toolId] || []
+export const addToolDM = (toolId: string, msg: any) => {
+  if (!state.value.toolDMs[toolId]) state.value.toolDMs[toolId] = []
+  state.value.toolDMs[toolId].push(msg)
+}
+
+// ===== 纠错报告持久化 =====
+export const addErrorReport = (report: any) => {
+  state.value.errorReports.unshift({
+    ...report,
+    id: 'er_' + Date.now(),
+    createdAt: new Date().toISOString()
+  })
+  state.value.userPoints += 5
+}
+export const errorReports = computed(() => state.value.errorReports)
+
+// ===== 直播预约 =====
+export const isLiveRegistered = (toolId: string) => state.value.liveRegistered[toolId] || false
+export const registerLive = (toolId: string) => {
+  state.value.liveRegistered[toolId] = true
+  state.value.userPoints += 3
+}
+
+// ===== 开发者反馈看板 =====
+export const ugcFeedback = computed(() => state.value.ugcFeedback)
+export const addUgcFeedback = (fb: any) => {
+  state.value.ugcFeedback.unshift({ ...fb, id: 'fb_' + Date.now(), createdAt: new Date().toISOString() })
 }
 
 // ===== 计算属性 =====
