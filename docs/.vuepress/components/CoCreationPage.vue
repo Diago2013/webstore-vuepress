@@ -7,6 +7,7 @@ import {
   voteCoRequest, getCoVotes,
   userPoints, addPost
 } from '../store/useStore.ts'
+import { heroImages } from '../data/images.ts'
 
 // 共建小组（每个分配一个独立 ID 用于持久化加入状态）
 const coBuildGroups = ref([
@@ -293,6 +294,9 @@ const displayPoints = computed(() => userPoints.value)
           <p class="ws-section-desc">开发者发布年度规划 · 全场问答 · 全民功能投票 · 评选表彰活跃用户</p>
         </div>
         <div class="ws-conf-card">
+          <div class="ws-conf-banner">
+            <img :src="heroImages.cocreate" alt="年度共创大会" class="ws-conf-banner-img" loading="lazy" />
+          </div>
           <div class="ws-conf-head">
             <div>
               <h3 class="ws-conf-title">{{ annualConf.title }}</h3>
@@ -446,11 +450,13 @@ const displayPoints = computed(() => userPoints.value)
 .ws-fade-enter-from, .ws-fade-leave-to { opacity: 0; }
 
 /* 年度大会 */
-.ws-conf-card { padding: 28px; background: linear-gradient(135deg, rgba(255,184,77,0.06), rgba(0,229,255,0.04)); border: 1px solid var(--color-border-strong); border-radius: var(--radius-lg); }
-.ws-conf-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+.ws-conf-card { padding: 0; background: linear-gradient(135deg, rgba(255,184,77,0.06), rgba(0,229,255,0.04)); border: 1px solid var(--color-border-strong); border-radius: var(--radius-lg); overflow: hidden; }
+.ws-conf-banner { width: 100%; height: 200px; overflow: hidden; position: relative; }
+.ws-conf-banner-img { width: 100%; height: 100%; object-fit: cover; }
+.ws-conf-head { padding: 28px 28px 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
 .ws-conf-title { font-family: var(--font-display); font-weight: 700; font-size: 26px; margin: 0; }
 .ws-conf-date { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--color-accent-amber); margin: 6px 0 0; }
-.ws-conf-body { display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px; }
+.ws-conf-body { display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px; padding: 0 28px 28px; }
 .ws-conf-agenda h4, .ws-conf-awards h4 { font-family: var(--font-display); font-weight: 600; font-size: 15px; margin: 0 0 14px; color: var(--color-text); }
 .ws-agenda-item { display: flex; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--color-border); }
 .ws-agenda-time { font-size: 13px; color: var(--color-accent-cyan); min-width: 50px; }
