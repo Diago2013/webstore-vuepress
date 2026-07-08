@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vuepress dev docs",
-    "build": "vuepress build docs",
+    "prebuild:css": "node -e \"const fs=require('fs'),p=require('path');const d='node_modules/@vuepress/plugin-git/dist';try{['GitChangelog-Do7jXfkp.css','GitContributors-BiR-YbYa.css'].forEach(f=>{if(!fs.existsSync(p.join(d,f)))fs.writeFileSync(p.join(d,f),'')})}catch(e){}\"",
+    "build": "npm run prebuild:css && node --experimental-loader ./css-load-hook.mjs node_modules/vuepress/bin/vuepress.js build docs",
     "clean-dev": "vuepress dev docs --clean-cache"
   },
   "dependencies": {
